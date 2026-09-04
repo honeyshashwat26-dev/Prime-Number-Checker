@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Number Checker</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card {
+    background: white;
+    padding: 35px;
+    border-radius: 18px;
+    width: min(420px, 85vw);
+    text-align: center;
+    box-shadow: 0 12px 35px rgba(0,0,0,.2);
+  }
+  input, button {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 14px;
+    margin-top: 15px;
+    border-radius: 10px;
+    font-size: 16px;
+  }
+  input { border: 1px solid #ccc; }
+  button {
+    border: none;
+    background: #667eea;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #result { min-height: 30px; margin-top: 20px; font-size: 20px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🔢 Prime Number Checker</h1>
+  <p>Enter a whole number to check if it is prime.</p>
+  <input type="number" id="number" placeholder="Enter a number" step="1">
+  <button onclick="checkPrime()">Check Number</button>
+  <div id="result"></div>
+</div>
+
+<script>
+function checkPrime() {
+  const input = document.getElementById("number").value;
+  const result = document.getElementById("result");
+
+  if (input === "" || !Number.isInteger(Number(input))) {
+    result.textContent = "Please enter a whole number.";
+    return;
+  }
+
+  const n = Number(input);
+
+  if (n <= 1) {
+    result.textContent = n + " is Not Prime ❌";
+    return;
+  }
+
+  if (n === 2) {
+    result.textContent = "2 is Prime ✅";
+    return;
+  }
+
+  if (n % 2 === 0) {
+    result.textContent = n + " is Not Prime ❌";
+    return;
+  }
+
+  for (let i = 3; i * i <= n; i += 2) {
+    if (n % i === 0) {
+      result.textContent = n + " is Not Prime ❌";
+      return;
+    }
+  }
+
+  result.textContent = n + " is Prime ✅";
+}
+
+document.getElementById("number").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") checkPrime();
+});
+</script>
+</body>
+</html>
