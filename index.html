@@ -5,95 +5,216 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prime Number Checker</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    min-height: 100vh;
+  * {
+    box-sizing: border-box;
     margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(circle at top left, #764ba2, #667eea);
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
   }
+
   .card {
-    background: white;
-    padding: 35px;
-    border-radius: 18px;
-    width: min(420px, 85vw);
+    background: #ffffff;
+    padding: 40px 30px;
+    border-radius: 24px;
+    width: min(450px, 100%);
     text-align: center;
-    box-shadow: 0 12px 35px rgba(0,0,0,.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
   }
-  input, button {
-    box-sizing: border-box;
+
+  h1 {
+    font-size: 26px;
+    color: #2d3748;
+    margin-bottom: 8px;
+  }
+
+  p.description {
+    font-size: 15px;
+    color: #718096;
+    margin-bottom: 24px;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  input {
     width: 100%;
-    padding: 14px;
-    margin-top: 15px;
-    border-radius: 10px;
+    padding: 16px;
+    border-radius: 12px;
     font-size: 16px;
+    border: 2px solid #e2e8f0;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  input { border: 1px solid #ccc; }
+
+  input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  }
+
   button {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
     border: none;
     background: #667eea;
     color: white;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.1s;
   }
-  #result { min-height: 30px; margin-top: 20px; font-size: 20px; }
+
+  button:hover {
+    background: #5a67d8;
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+
+  #result {
+    margin-top: 24px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .badge {
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: 600;
+    word-break: break-all;
+    max-width: 100%;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .badge.prime {
+    background: #e6fffa;
+    color: #234e52;
+    border: 1px solid #b2f5ea;
+  }
+
+  .badge.not-prime {
+    background: #fff5f5;
+    color: #742a2a;
+    border: 1px solid #fed7d7;
+  }
+
+  .badge.error {
+    background: #edf2f7;
+    color: #4a5568;
+  }
+
+  footer {
+    margin-top: 30px;
+    font-size: 13px;
+    color: #a0aec0;
+  }
+
+  footer a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  footer a:hover {
+    text-decoration: underline;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 </style>
 </head>
 <body>
+
 <div class="card">
-<h1>🔢 Prime Number Checker</h1>
-  <p>Enter a whole number to check if it is prime.</p>
-  <input type="number" id="number" placeholder="Enter a number" step="1">
-  <button onclick="checkPrime()">Check Number</button>
+  <h1>🔢 Prime Checker</h1>
+  <p class="description">Enter a whole number to check if it is prime.</p>
+  
+  <div class="input-group">
+    <!-- Changed type="text" to prevent HTML5 number input from stripping/rounding huge BigInt values -->
+    <input type="text" id="number" placeholder="e.g. 982451653" autocomplete="off">
+    <button onclick="checkPrime()">Check Number</button>
+  </div>
+
   <div id="result"></div>
-  <p style="font-size: 14px; color: #666;">
-      copyright © 2026 Prime Number Checker
-      Made by <a href="https://www.github.com/honeyshashwat26-dev/" target="_blank">Honey</a>
-    </p>
+
+  <footer>
+    Copyright © 2026 Prime Number Checker<br>
+    Made by <a href="https://www.github.com/honeyshashwat26-dev/" target="_blank" rel="noopener noreferrer">Honey</a>
+  </footer>
 </div>
 
 <script>
 function checkPrime() {
-  const input = document.getElementById("number").value;
+  const inputVal = document.getElementById("number").value.trim();
   const result = document.getElementById("result");
 
-  if (input === "" || !Number.isInteger(Number(input))) {
-    result.textContent = "Please enter a whole number.";
+  // Validate that input consists only of digits
+  if (!/^\d+$/.test(inputVal)) {
+    result.innerHTML = `<div class="badge error">Please enter a valid positive whole number.</div>`;
     return;
   }
 
-  const n = Number(input);
+  try {
+    const n = BigInt(inputVal);
 
-  if (n <= 1) {
-    result.textContent = n + " is Not Prime ❌";
-    return;
-  }
-
-  if (n === 2) {
-    result.textContent = "2 is Prime ✅";
-    return;
-  }
-
-  if (n % 2 === 0) {
-    result.textContent = n + " is Not Prime ❌";
-    return;
-  }
-
-  for (let i = 3; i * i <= n; i += 2) {
-    if (n % i === 0) {
-      result.textContent = n + " is Not Prime ❌";
+    if (n <= 1n) {
+      result.innerHTML = `<div class="badge not-prime">${n.toString()} is Not Prime ❌</div>`;
       return;
     }
-  }
 
-  result.textContent = n + " is Prime ✅";
+    if (n === 2n || n === 3n) {
+      result.innerHTML = `<div class="badge prime">${n.toString()} is Prime ✅</div>`;
+      return;
+    }
+
+    if (n % 2n === 0n || n % 3n === 0n) {
+      result.innerHTML = `<div class="badge not-prime">${n.toString()} is Not Prime ❌</div>`;
+      return;
+    }
+
+    // 6k ± 1 primality test algorithm optimized for BigInt
+    let isPrime = true;
+    for (let i = 5n; i * i <= n; i += 6n) {
+      if (n % i === 0n || n % (i + 2n) === 0n) {
+        isPrime = false;
+        break;
+      }
+    }
+
+    if (isPrime) {
+      result.innerHTML = `<div class="badge prime">${n.toString()} is Prime ✅</div>`;
+    } else {
+      result.innerHTML = `<div class="badge not-prime">${n.toString()} is Not Prime ❌</div>`;
+    }
+
+  } catch (error) {
+    result.innerHTML = `<div class="badge error">Number is too large to process.</div>`;
+  }
 }
 
 document.getElementById("number").addEventListener("keydown", function(e) {
   if (e.key === "Enter") checkPrime();
 });
 </script>
+
 </body>
 </html>
